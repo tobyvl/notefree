@@ -1,64 +1,185 @@
-<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NoteFree</title>
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreeNote</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#eef1f5;color:#18202a}header{height:58px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:8px;padding:0 12px;position:sticky;top:0;z-index:5}.logo{font-weight:800;font-size:19px;margin-right:12px}.spacer{flex:1}.btn{border:1px solid #d4d9e0;background:#fff;border-radius:9px;padding:8px 11px;cursor:pointer}.btn:hover{background:#f2f4f7}.colors,.sizes{display:flex;gap:5px;align-items:center;padding:0 2px}.swatch{width:25px;height:25px;border-radius:50%;border:2px solid #fff;outline:1px solid #ccd3dc;cursor:pointer;padding:0}.swatch.active{outline:2px solid #111827;outline-offset:1px}.palette{display:none;position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #d7dce3;border-radius:14px;padding:14px;box-shadow:0 8px 30px #0003;z-index:20;width:310px}.palette.open{display:block}.paletteTitle{font-weight:700;margin-bottom:10px}.paletteGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}.paletteColor{width:28px;height:28px;padding:0;border:1px solid #ccd3dc;border-radius:50%;cursor:pointer}.paletteCustom{display:flex;gap:7px;align-items:center;margin-top:12px;font-size:13px}.paletteCustom input{width:30px;height:30px;padding:0}.size{min-width:30px;height:28px;border:1px solid #d4d9e0;background:#fff;border-radius:7px;cursor:pointer}.size.active{background:#e9eef8;border-color:#8b98aa;font-weight:700}main{display:flex;height:calc(100vh - 58px)}aside{width:240px;background:#f8f9fb;border-right:1px solid #ddd;padding:14px;overflow:auto}.book{background:#fff;border:1px solid #e0e4ea;border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer}.book.active{border-color:#7b8797}.book small{display:block;color:#687385;margin-top:3px}#workspace{flex:1;overflow:auto;background:#dfe4ea}#paper{position:relative;background:white;width:900px;min-height:1165px;margin:30px auto 80px;box-shadow:0 2px 14px #0002}#draw{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:#eef1f5;color:#18202a}
+header{height:58px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:8px;padding:0 12px;position:sticky;top:0;z-index:5}
+.logo{font-weight:800;font-size:19px;margin-right:12px}
+.spacer{flex:1}
+.btn{border:1px solid #d4d9e0;background:#fff;border-radius:9px;padding:8px 11px;cursor:pointer}
+.btn:hover{background:#f2f4f7}
+.colors,.sizes{display:flex;gap:5px;align-items:center;padding:0 2px}
+.swatch{width:25px;height:25px;border-radius:50%;border:2px solid #fff;outline:1px solid #ccd3dc;cursor:pointer;padding:0}
+.swatch.active{outline:2px solid #111827;outline-offset:1px}
+.palette{display:none;position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #d7dce3;border-radius:14px;padding:14px;box-shadow:0 8px 30px #0003;z-index:20;width:310px}
+.palette.open{display:block}
+.paletteTitle{font-weight:700;margin-bottom:10px}
+.paletteGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.paletteColor{width:28px;height:28px;padding:0;border:1px solid #ccd3dc;border-radius:50%;cursor:pointer}
+.paletteCustom{display:flex;gap:7px;align-items:center;margin-top:12px;font-size:13px}
+.paletteCustom input{width:30px;height:30px;padding:0}
+.size{min-width:30px;height:28px;border:1px solid #d4d9e0;background:#fff;border-radius:7px;cursor:pointer}
+.size.active{background:#e9eef8;border-color:#8b98aa;font-weight:700}
+main{display:flex;height:calc(100vh - 58px)}
+aside{width:240px;background:#f8f9fb;border-right:1px solid #ddd;padding:14px;overflow:auto}
+.book{background:#fff;border:1px solid #e0e4ea;border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer}
+.book.active{border-color:#7b8797}
+.book small{display:block;color:#687385;margin-top:3px}
+#workspace{flex:1;overflow:auto;background:#dfe4ea}
+#paper{position:relative;background:white;width:900px;min-height:1165px;margin:30px auto 80px;box-shadow:0 2px 14px #0002}
+#draw{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 .imageObj{position:absolute;left:80px;top:80px;width:300px;max-width:none;cursor:move;user-select:none;touch-action:none;border:2px solid transparent}
-.imageObj.selected{border:2px solid #2563eb}.imageObj.locked{cursor:default;border-color:transparent}
+.imageObj.selected{border:2px solid #2563eb}
+.imageObj.locked{cursor:default;border-color:transparent}
 .selectionBox{position:absolute;border:2px dashed #2563eb;background:#2563eb18;pointer-events:none;z-index:40}
 #draw.readOnly{cursor:default}
 body.reading #toolbar,body.reading #settingsPanel{opacity:.35;pointer-events:none}
 body.reading #readMode{background:#e9eef8;border-color:#8b98aa}
 .selectMenu{position:fixed;display:none;background:#fff;border:1px solid #d7dce3;border-radius:10px;padding:6px;box-shadow:0 5px 20px #0002;z-index:50}
-.selectMenu button{display:block;width:100%;border:0;background:#fff;padding:7px 10px;text-align:left;border-radius:7px;cursor:pointer}.selectMenu button:hover{background:#f2f4f7}.imageObj.locked{cursor:default;border-color:transparent}
-.imageLock{position:absolute;right:6px;top:6px;border:0;background:#fff;border-radius:7px;padding:4px;cursor:pointer;z-index:2}.imageHandle{position:absolute;width:14px;height:14px;background:#fff;border:2px solid #2563eb;border-radius:3px;right:-8px;bottom:-8px;cursor:nwse-resize}#toolbar{position:fixed;left:50%;transform:translateX(-50%);bottom:15px;background:white;border:1px solid #d7dce3;border-radius:14px;padding:8px;display:flex;gap:7px;align-items:center;box-shadow:0 5px 25px #0002;z-index:10}.tool.active{background:#e9eef8}.color{width:30px;height:30px;padding:2px}.status{font-size:12px;color:#697586}.settingsPanel{display:none;position:fixed;right:15px;top:72px;width:310px;background:#fff;border:1px solid #d7dce3;border-radius:14px;padding:14px;box-shadow:0 8px 30px #0003;z-index:30}.settingsPanel.open{display:block}.settingsHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.settingRow{display:flex;gap:9px;align-items:center;padding:9px 0;cursor:pointer}hr{border:0;border-top:1px solid #e5e7eb}
-</style></head><body>
-<header><div class="logo">📝 NoteFree</div><button class="btn" id="newBook">＋ Sešit</button><button class="btn" id="addPage">＋ Stránka</button><button class="btn" id="addImage">🖼️ Fotka</button><input id="imageInput" type="file" accept="image/*" hidden><button class="btn" id="share">👥 Sdílet</button><button class="btn" id="settingsBtn">⚙️ Nastavení</button><button class="btn" id="readMode">👁️ Čtení</button><div class="spacer"></div><span class="status" id="status">Uloženo</span><button class="btn" id="export">📥 Export PNG</button></header>
-<main><aside><b>Moje sešity</b><div id="books"></div></aside><section id="workspace"><div id="paper"><canvas id="draw"></canvas></div></section></main>
-<div id="toolbar"><button class="btn tool active" data-tool="pen">🖊️ Pero</button><button class="btn tool" data-tool="highlighter">🖍️ Zvýrazňovač</button><button class="btn tool" data-tool="eraser">⌫ Guma</button><button class="btn tool" data-tool="select">▣ Výběr</button><div id="colors" class="colors" title="Použité/předvolené barvy">
-<button class="swatch active" data-color="#111827" style="background:#111827"></button>
-<button class="swatch" data-color="#2563eb" style="background:#2563eb"></button>
-<button class="swatch" data-color="#dc2626" style="background:#dc2626"></button>
-<button class="swatch" data-color="#16a34a" style="background:#16a34a"></button>
-<button class="swatch" data-color="#9333ea" style="background:#9333ea"></button>
-<button class="swatch" data-color="#f59e0b" style="background:#f59e0b"></button>
-<button class="swatch" data-color="#ec4899" style="background:#ec4899"></button>
-<button class="btn" id="paletteBtn">🎨 Paleta</button>
+.selectMenu button{display:block;width:100%;border:0;background:#fff;padding:7px 10px;text-align:left;border-radius:7px;cursor:pointer}
+.selectMenu button:hover{background:#f2f4f7}
+.imageLock{position:absolute;right:6px;top:6px;border:0;background:#fff;border-radius:7px;padding:4px;cursor:pointer;z-index:2}
+.imageHandle{position:absolute;width:14px;height:14px;background:#fff;border:2px solid #2563eb;border-radius:3px;right:-8px;bottom:-8px;cursor:nwse-resize}
+#toolbar{position:fixed;left:55%;transform:translateX(-55%);bottom:15px;background:white;border:1px solid #d7dce3;border-radius:14px;padding:8px;display:flex;gap:7px;align-items:center;box-shadow:0 5px 25px #0002;z-index:10}
+.tool.active{background:#e9eef8}
+.color{width:30px;height:30px;padding:2px}
+.status{font-size:12px;color:#697586}
+.settingsPanel{display:none;position:fixed;right:15px;top:72px;width:310px;background:#fff;border:1px solid #d7dce3;border-radius:14px;padding:14px;box-shadow:0 8px 30px #0003;z-index:30}
+.settingsPanel.open{display:block}
+.settingsHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.settingRow{display:flex;gap:9px;align-items:center;padding:9px 0;cursor:pointer}
+hr{border:0;border-top:1px solid #e5e7eb}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📝 NoteFree</div>
+  <button class="btn" id="newBook">＋ Sešit</button>
+  <button class="btn" id="addPage">＋ Stránka</button>
+  <button class="btn" id="addImage">🖼️ Fotka</button>
+  <input id="imageInput" type="file" accept="image/*" hidden>
+  <button class="btn" id="share">👥 Sdílet</button>
+  <button class="btn" id="settingsBtn">⚙️ Nastavení</button>
+  <button class="btn" id="readMode">👁️ Čtení</button>
+  <div class="spacer"></div>
+  <span class="status" id="status">Uloženo</span>
+  <button class="btn" id="export">📥 Export PNG</button>
+</header>
+
+<main>
+  <aside><b>Moje sešity</b><div id="books"></div></aside>
+  <section id="workspace">
+    <div id="paper"><canvas id="draw"></canvas></div>
+  </section>
+</main>
+
+<div id="toolbar">
+  <button class="btn tool active" data-tool="pen">🖊️ Pero</button>
+  <button class="btn tool" data-tool="highlighter">🖍️ Zvýrazňovač</button>
+  <button class="btn tool" data-tool="eraser">⌫ Guma</button>
+  <button class="btn tool" data-tool="select">▣ Výběr</button>
+  <div id="colors" class="colors" title="Použité/předvolené barvy">
+    <button class="swatch active" data-color="#111827" style="background:#111827"></button>
+    <button class="swatch" data-color="#2563eb" style="background:#2563eb"></button>
+    <button class="swatch" data-color="#dc2626" style="background:#dc2626"></button>
+    <button class="swatch" data-color="#16a34a" style="background:#16a34a"></button>
+    <button class="swatch" data-color="#9333ea" style="background:#9333ea"></button>
+    <button class="swatch" data-color="#f59e0b" style="background:#f59e0b"></button>
+    <button class="swatch" data-color="#ec4899" style="background:#ec4899"></button>
+    <button class="btn" id="paletteBtn">🎨 Paleta</button>
+  </div>
+  <div id="palette" class="palette">
+    <div class="paletteTitle">Paleta barev</div>
+    <div class="paletteGrid">
+      <input type="color" class="paletteColor" value="#111827" title="Vyber barvu">
+      <input type="color" class="paletteColor" value="#ffffff">
+      <input type="color" class="paletteColor" value="#ef4444">
+      <input type="color" class="paletteColor" value="#f97316">
+      <input type="color" class="paletteColor" value="#f59e0b">
+      <input type="color" class="paletteColor" value="#eab308">
+      <input type="color" class="paletteColor" value="#84cc16">
+      <input type="color" class="paletteColor" value="#22c55e">
+      <input type="color" class="paletteColor" value="#14b8a6">
+      <input type="color" class="paletteColor" value="#06b6d4">
+      <input type="color" class="paletteColor" value="#3b82f6">
+      <input type="color" class="paletteColor" value="#6366f1">
+      <input type="color" class="paletteColor" value="#8b5cf6">
+      <input type="color" class="paletteColor" value="#a855f7">
+      <input type="color" class="paletteColor" value="#ec4899">
+      <input type="color" class="paletteColor" value="#f43f5e">
+    </div>
+    <div class="paletteCustom">
+      <span>Vlastní:</span>
+      <input id="customColor" type="color" value="#111827">
+      <button class="btn" id="addColor">＋ Přidat</button>
+    </div>
+  </div>
+  <div id="sizes" class="sizes" title="Velikost pera">
+    <button class="size active" data-size="2">2</button>
+    <button class="size" data-size="3">3</button>
+    <button class="size" data-size="5">5</button>
+    <button class="size" data-size="8">8</button>
+    <button class="size" data-size="12">12</button>
+    <button class="size" data-size="18">18</button>
+  </div>
+  <button class="btn" id="undo">↶</button>
+  <button class="btn" id="clear">🗑️</button>
 </div>
-<div id="palette" class="palette">
-<div class="paletteTitle">Paleta barev</div>
-<div class="paletteGrid">
-<input type="color" class="paletteColor" value="#111827" title="Vyber barvu">
-<input type="color" class="paletteColor" value="#ffffff">
-<input type="color" class="paletteColor" value="#ef4444">
-<input type="color" class="paletteColor" value="#f97316">
-<input type="color" class="paletteColor" value="#f59e0b">
-<input type="color" class="paletteColor" value="#eab308">
-<input type="color" class="paletteColor" value="#84cc16">
-<input type="color" class="paletteColor" value="#22c55e">
-<input type="color" class="paletteColor" value="#14b8a6">
-<input type="color" class="paletteColor" value="#06b6d4">
-<input type="color" class="paletteColor" value="#3b82f6">
-<input type="color" class="paletteColor" value="#6366f1">
-<input type="color" class="paletteColor" value="#8b5cf6">
-<input type="color" class="paletteColor" value="#a855f7">
-<input type="color" class="paletteColor" value="#ec4899">
-<input type="color" class="paletteColor" value="#f43f5e">
+
+<div id="selectMenu" class="selectMenu">
+  <button id="moveSel">↔ Posunout</button>
+  <button id="lockSel">🔒 Uzamknout výběr</button>
+  <button id="deleteSel">🗑️ Smazat výběr</button>
+  <button id="clearSel">✕ Zrušit výběr</button>
 </div>
-<div class="paletteCustom"><span>Vlastní:</span><input id="customColor" type="color" value="#111827"><button class="btn" id="addColor">＋ Přidat</button></div>
+
+<div id="settingsPanel" class="settingsPanel">
+  <div class="settingsHeader"><b>Nastavení psaní</b><button class="btn" id="closeSettings">✕</button></div>
+  <label class="settingRow"><input type="checkbox" id="penOnly"> Psát pouze perem / stylusem</label>
+  <label class="settingRow"><input type="checkbox" id="fingerScroll" checked> Prstem pouze posouvat stránku</label>
+  <p class="status">Když je zapnuté „Psát pouze perem“, dotyk prstem nebude kreslit.</p>
+  <hr>
+  <label class="settingRow"><input type="checkbox" id="lockNewImages"> Nové obrázky automaticky uzamknout</label>
 </div>
-<div id="sizes" class="sizes" title="Velikost pera">
-<button class="size active" data-size="2">2</button>
-<button class="size" data-size="3">3</button>
-<button class="size" data-size="5">5</button>
-<button class="size" data-size="8">8</button>
-<button class="size" data-size="12">12</button>
-<button class="size" data-size="18">18</button>
-</div><button class="btn" id="undo">↶</button><button class="btn" id="clear">🗑️</button></div>
+
+<!-- JavaScript MUST be loaded at the bottom of <body> so all elements exist -->
 <script>
-const KEY="notefree-v1";let state=JSON.parse(localStorage.getItem(KEY)||"null")||{books:[{name:"Moje poznámky",pages:[{strokes:[],images:[]}]}],currentBook:0,currentPage:0};let tool="pen",drawing=false,current=null,history=[],currentColor="#111827",currentSize=3;
-const c=document.getElementById("draw"),paper=document.getElementById("paper"),ctx=c.getContext("2d");
-function save(){localStorage.setItem(KEY,JSON.stringify(state));document.getElementById("status").textContent="Uloženo ✓";setTimeout(()=>document.getElementById("status").textContent="",700)}
-function pg(){let x=state.books[state.currentBook].pages[state.currentPage];if(!x.images)x.images=[];return x}
-function resize(){let r=paper.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);redraw()}window.onresize=resize;
+const KEY="notefree-v1";
+let state=JSON.parse(localStorage.getItem(KEY)||"null")||{books:[{name:"Moje poznámky",pages:[{strokes:[],images:[]}]}],currentBook:0,currentPage:0};
+let tool="pen",drawing=false,current=null,history=[],currentColor="#111827",currentSize=3;
+
+const c=document.getElementById("draw"), paper=document.getElementById("paper"), ctx=c.getContext("2d");
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  document.getElementById("status").textContent="Uloženo ✓";
+  setTimeout(()=>document.getElementById("status").textContent="",700);
+}
+
+function pg(){
+  let x=state.books[state.currentBook].pages[state.currentPage];
+  if(!x.images)x.images=[];
+  return x;
+}
+
+function resize(){
+  let r=paper.getBoundingClientRect(), d=devicePixelRatio||1;
+  c.width=r.width*d;
+  c.height=r.height*d;
+  ctx.setTransform(d,0,0,d,0,0);
+  redraw();
+}
+
+// Automatically handle initial load sizing and dynamic paper size changes
+const resizeObserver = new ResizeObserver(() => resize());
+resizeObserver.observe(paper);
+window.onresize=resize;
+
 function redraw(){
  ctx.clearRect(0,0,c.clientWidth,c.clientHeight);
  pg().strokes.forEach(drawStroke);
@@ -68,8 +189,27 @@ function redraw(){
    if(b){ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle="#2563eb";ctx.lineWidth=2;ctx.strokeRect(b.x-5,b.y-5,b.w+10,b.h+10);ctx.restore();}
  }
 }
-function drawStroke(s){if(!s.points.length)return;ctx.save();ctx.globalAlpha=s.alpha;ctx.strokeStyle=s.color;ctx.lineWidth=s.size;ctx.lineCap="round";ctx.lineJoin="round";ctx.beginPath();ctx.moveTo(...s.points[0]);s.points.slice(1).forEach(p=>ctx.lineTo(...p));ctx.stroke();ctx.restore()}
-function pos(e){let r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+
+function drawStroke(s){
+  if(!s.points.length)return;
+  ctx.save();
+  ctx.globalAlpha=s.alpha;
+  ctx.strokeStyle=s.color;
+  ctx.lineWidth=s.size;
+  ctx.lineCap="round";
+  ctx.lineJoin="round";
+  ctx.beginPath();
+  ctx.moveTo(...s.points[0]);
+  s.points.slice(1).forEach(p=>ctx.lineTo(...p));
+  ctx.stroke();
+  ctx.restore();
+}
+
+function pos(e){
+  let r=c.getBoundingClientRect();
+  return[e.clientX-r.left,e.clientY-r.top];
+}
+
 c.onpointerdown=e=>{
  if(document.body.classList.contains("reading")) return;
  if(tool==="select"){startSelection(e);return}
@@ -77,7 +217,9 @@ c.onpointerdown=e=>{
  drawing=true;c.setPointerCapture(e.pointerId);if(tool==="eraser"){erase(pos(e));return}history.push(JSON.stringify(pg().strokes));let p=pos(e);current={id:crypto.randomUUID(),points:[p],color:tool==="highlighter"?"#facc15":currentColor,size:tool==="highlighter"?18:currentSize,alpha:tool==="highlighter"?.28:1};pg().strokes.push(current);drawStroke(current)};
 c.onpointermove=e=>{if(!drawing)return;let p=pos(e);if(tool==="eraser"){erase(p);return}current.points.push(p);drawStroke(current)};
 c.onpointerup=c.onpointercancel=()=>{drawing=false;current=null;save()};
+
 function erase(p){let old=pg().strokes.length;pg().strokes=pg().strokes.filter(s=>!s.points.some(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<20));if(old!==pg().strokes.length)redraw()}
+
 document.querySelectorAll(".tool").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tool").forEach(x=>x.classList.remove("active"));b.classList.add("active");tool=b.dataset.tool});
 document.getElementById("undo").onclick=()=>{let h=history.pop();if(h){pg().strokes=JSON.parse(h);redraw();save()}};
 document.getElementById("clear").onclick=()=>{if(confirm("Smazat stránku?")){history.push(JSON.stringify(pg().strokes));pg().strokes=[];redraw();save()}};
@@ -88,6 +230,7 @@ function renderImages(){
    let el=document.createElement("div");el.className="imageObj";el.dataset.idx=idx;
    if(im.locked)el.classList.add("locked");
    el.style.left=im.x+"px";el.style.top=im.y+"px";el.style.width=im.w+"px";
+   // styděl bych se btw :3
    let img=document.createElement("img");img.src=im.src;img.draggable=false;img.style.width="100%";img.style.display="block";el.appendChild(img);
    let lock=document.createElement("button");lock.className="imageLock";lock.textContent=im.locked?"🔒":"🔓";lock.title=im.locked?"Odemknout":"Uzamknout";
    lock.onclick=e=>{e.stopPropagation();im.locked=!im.locked;save();redraw()};el.appendChild(lock);
@@ -111,6 +254,7 @@ function renderImages(){
    paper.appendChild(el);
  });
 }
+
 document.getElementById("addImage").onclick=()=>document.getElementById("imageInput").click();
 document.getElementById("imageInput").onchange=e=>{
  const file=e.target.files[0];if(!file)return;
@@ -121,7 +265,6 @@ document.getElementById("imageInput").onchange=e=>{
  };
  reader.readAsDataURL(file);e.target.value="";
 };
-
 
 let selectionStart=null, selectionBox=null, selectedStrokeIds=[];
 function strokeBounds(strokes){
@@ -161,6 +304,7 @@ document.getElementById("newBook").onclick=()=>{let n=prompt("Název sešitu","N
 document.getElementById("addPage").onclick=()=>{state.books[state.currentBook].pages.push({strokes:[],images:[]});state.currentPage=state.books[state.currentBook].pages.length-1;save();books();redraw()};
 document.getElementById("export").onclick=()=>{let a=document.createElement("a");a.download="poznamky.png";a.href=c.toDataURL();a.click()};
 document.getElementById("share").onclick=()=>alert("Tato první verze ukládá data lokálně v prohlížeči. Skutečné sdílení mezi dvěma zařízeními vyžaduje online server a synchronizaci.");
+
 function setColor(color){
  currentColor=color;
  document.querySelectorAll(".swatch").forEach(x=>x.classList.remove("active"));
@@ -177,7 +321,6 @@ document.querySelectorAll(".paletteColor").forEach(b=>b.oninput=()=>setColor(b.v
 document.getElementById("paletteBtn").onclick=()=>document.getElementById("palette").classList.toggle("open");
 document.getElementById("addColor").onclick=()=>{setColor(document.getElementById("customColor").value);document.getElementById("palette").classList.remove("open")};
 document.querySelectorAll(".size").forEach(b=>b.onclick=()=>{currentSize=+b.dataset.size;document.querySelectorAll(".size").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
-
 
 document.getElementById("readMode").onclick=()=>{
  document.body.classList.toggle("reading");
@@ -197,6 +340,7 @@ document.getElementById("deleteSel").onclick=()=>{
  finishSelection();save();
 };
 document.getElementById("clearSel").onclick=finishSelection;
+
 const settingsPanel=document.getElementById("settingsPanel");
 document.getElementById("settingsBtn").onclick=()=>settingsPanel.classList.toggle("open");
 document.getElementById("closeSettings").onclick=()=>settingsPanel.classList.remove("open");
@@ -209,20 +353,9 @@ document.getElementById("fingerScroll").onchange=e=>{
 };
 document.getElementById("lockNewImages").onchange=e=>window.lockNewImages=e.target.checked;
 window.lockNewImages=false;
-books();resize();
+
+books();
+setTimeout(resize, 0); // Ensures correct scaling calculations immediately on startup
 </script>
-<div id="selectMenu" class="selectMenu">
-<button id="moveSel">↔ Posunout</button>
-<button id="lockSel">🔒 Uzamknout výběr</button>
-<button id="deleteSel">🗑️ Smazat výběr</button>
-<button id="clearSel">✕ Zrušit výběr</button>
-</div>
-<div id="settingsPanel" class="settingsPanel">
-  <div class="settingsHeader"><b>Nastavení psaní</b><button class="btn" id="closeSettings">✕</button></div>
-  <label class="settingRow"><input type="checkbox" id="penOnly"> Psát pouze perem / stylusem</label>
-  <label class="settingRow"><input type="checkbox" id="fingerScroll" checked> Prstem pouze posouvat stránku</label>
-  <p class="status">Když je zapnuté „Psát pouze perem“, dotyk prstem nebude kreslit.</p>
-  <hr>
-  <label class="settingRow"><input type="checkbox" id="lockNewImages"> Nové obrázky automaticky uzamknout</label>
-</div>
-</body></html>
+</body>
+</html>
